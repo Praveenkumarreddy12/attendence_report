@@ -150,12 +150,13 @@
     <!-- Photo button -->
     <button id="captureButton">Take Photo</button>
     
-    <form id="registrationForm">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="text" name="usn" placeholder="USN" required>
-        <input type="text" name="branch" placeholder="Branch" required>
-        <input type="text" name="class" placeholder="Class" required>
-        <input type="text" name="section" placeholder="Section" required>
+    <form id="registrationForm" action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="text" name="emo_name" placeholder="Name" required>
+        <input type="text" name="empid" placeholder="Employee ID" required>
+        <input type="email" name="emp_email" placeholder="Email" required>
+        <input type="text" name="phone_number" placeholder="Phone Number" required>
+        <input type="hidden" id="photo" name="photo" required>
         <button type="submit">Submit</button>
     </form>
 </div>
@@ -166,6 +167,7 @@
     const captureButton = document.getElementById('captureButton');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
+    const photoInput = document.getElementById('photo');
     
     let videoStream;
 
@@ -185,6 +187,7 @@
                 .then((stream) => {
                     videoStream = stream;
                     webcam.srcObject = stream;
+                    hideCanvas();
                 })
                 .catch((error) => {
                     alert('Error accessing webcam: ' + error);
@@ -203,15 +206,12 @@
         // Draw the current frame from the webcam to the canvas
         ctx.drawImage(webcam, 0, 0, canvas.width, canvas.height);
 
-        // Convert the canvas content to a data URL (image)
-        const imageData = canvas.toDataURL('image/png');
-        const dataFile = new Blob([imageData], { type: 'image/png' });
-        const fileReader = new FileReader();
-        fileReader.onload = function(event) {
-            // Set the image input value to the captured image data URL
-            document.getElementById('imageInput').value = event.target.result;
-        };
-        fileReader.readAsDataURL(dataFile);
+        // Move the image to the black screen
+        webcam.style.display = 'none';
+        canvas.style.display = 'block';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.objectFit = 'cover';
 
         // Stop the webcam stream after taking the photo
         let tracks = videoStream.getTracks();
@@ -220,10 +220,49 @@
         // Reset webcam
         webcam.srcObject = null;
         videoStream = null;
+
+        // Convert canvas to base64 and set it to the photo input
+        canvas.toBlob((blob) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                photoInput.value = reader.result;
+            };
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    // Hide canvas while webcam is on
+    function hideCanvas() {
+        canvas.style.display = 'none';
+        webcam.style.display = 'block';
+    }
+
+    // Call hideCanvas function when webcam is started
+    function startWebcam() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    videoStream = stream;
+                    webcam.srcObject = stream;
+                    hideCanvas();
+                })
+                .catch((error) => {
+                    alert('Error accessing webcam: ' + error);
+                });
+        } else {
+            alert('Webcam not supported on this browser.');
+        }
     }
 
     // Form submission handling
-    
+    document.getElementById('registrationForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!photoInput.value) {
+            alert('Please take a photo before submitting.');
+            return;
+        }
+        document.getElementById('registrationForm').submit();
+    });
 </script>
 
 </body>
