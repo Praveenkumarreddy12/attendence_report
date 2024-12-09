@@ -150,13 +150,12 @@
     <!-- Photo button -->
     <button id="captureButton">Take Photo</button>
     
-    <form id="registrationForm" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="text" name="emo_name" placeholder="Name" required>
-        <input type="text" name="empid" placeholder="Employee ID" required>
-        <input type="email" name="emp_email" placeholder="Email" required>
-        <input type="text" name="phone_number" placeholder="Phone Number" required>
-        <input type="hidden" name="image" id="imageInput">
+    <form id="registrationForm">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="usn" placeholder="USN" required>
+        <input type="text" name="branch" placeholder="Branch" required>
+        <input type="text" name="class" placeholder="Class" required>
+        <input type="text" name="section" placeholder="Section" required>
         <button type="submit">Submit</button>
     </form>
 </div>
