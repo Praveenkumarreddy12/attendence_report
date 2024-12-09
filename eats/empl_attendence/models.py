@@ -6,6 +6,6 @@ class Register(models.Model):
     empid = models.CharField(max_length=100)
     emp_email = models.EmailField()
     phone_number = models.CharField(max_length=15)
-    image = models.ImageField(upload_to='images/')
+    image = models.ImageField(upload_to='images/' , null=True, blank=True)
 
 

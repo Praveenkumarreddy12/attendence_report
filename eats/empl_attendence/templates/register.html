@@ -150,12 +150,13 @@
     <!-- Photo button -->
     <button id="captureButton">Take Photo</button>
     
-    <form id="registrationForm">
-        <input type="text" name="name" placeholder="Name" required>
-        <input type="text" name="usn" placeholder="USN" required>
-        <input type="text" name="branch" placeholder="Branch" required>
-        <input type="text" name="class" placeholder="Class" required>
-        <input type="text" name="section" placeholder="Section" required>
+    <form id="registrationForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="text" name="emo_name" placeholder="Name" required>
+        <input type="text" name="empid" placeholder="Employee ID" required>
+        <input type="email" name="emp_email" placeholder="Email" required>
+        <input type="text" name="phone_number" placeholder="Phone Number" required>
+        <input type="hidden" name="image" id="imageInput">
         <button type="submit">Submit</button>
     </form>
 </div>
@@ -205,12 +206,13 @@
 
         // Convert the canvas content to a data URL (image)
         const imageData = canvas.toDataURL('image/png');
-
-        // Create a download link
-        const link = document.createElement('a');
-        link.href = imageData;
-        link.download = 'photo.png';
-        link.click();  // Automatically download the image
+        const dataFile = new Blob([imageData], { type: 'image/png' });
+        const fileReader = new FileReader();
+        fileReader.onload = function(event) {
+            // Set the image input value to the captured image data URL
+            document.getElementById('imageInput').value = event.target.result;
+        };
+        fileReader.readAsDataURL(dataFile);
 
         // Stop the webcam stream after taking the photo
         let tracks = videoStream.getTracks();
@@ -222,35 +224,7 @@
     }
 
     // Form submission handling
-    const form = document.getElementById('registrationForm');
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
-
-        // Send data to backend API
-        fetch('http://localhost:5000/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-            console.log(result);
-            alert('Registration successful!');
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Registration failed!');
-        });
-    });
+    
 </script>
 
 </body>
