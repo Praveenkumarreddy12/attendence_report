@@ -139,7 +139,8 @@
 </button>
 
 <div class="form-container">
-    <h1>Register</h1>
+    <h1>Log in</h1>
+    <h4>{{register}} </h4>
     
     <!-- Webcam container for capturing the image -->
     <div class="webcam-container">
@@ -154,6 +155,9 @@
         {% csrf_token %}
         <input type="hidden" id="photo" name="image" required>
         <button type="submit">Submit</button>
+        <a href="{% url 'register' %}" class="register-link">Register</a>
+        <a href="{% url 'attendence' %}" class="register-link">attendence</a>
+
     </form>
 </div>
 

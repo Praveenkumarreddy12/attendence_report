@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Control</title>
+    <style>
+        /* Gradient background with smooth animation */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #ff8a00, #e52e71, #6a11cb, #2575fc);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s ease infinite;
+            color: white;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(225, 216, 247, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            width: 320px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        button {
+            padding: 12px 24px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 30px;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+        }
+
+        button:active {
+            transform: translateY(2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Attendance Logger</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <label for="empid">Employee ID:</label>
+        <input type="text" id="empid" name="empid" required>
+        <button type="submit">Get</button>
+        <a href="{% url 'register' %}" class="register-link">Register</a>
+        <a href="{% url 'login' %}" class="register-link">login</a>
+
+    </form>
+</div>
+    
+
+    <h2>Attendence:</h2>
+    <ul>
+        {% for entry in attendence %}
+            <li>{{ entry.empid }} - {{ entry.uploadedat }}</li>
+        {% endfor %}
+    </ul>
+
+    <div class="total" style="position: absolute; bottom: 0;">
+        <footer>
+            <h2>Total Days: {{ total_days }}</h2>
+        </footer>
+    </div>
+
+
+
+
+</body>
+</html>

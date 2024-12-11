@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Register
+from .models import Register, Attendence
 import base64
 import os
 from django.core.files.base import ContentFile
@@ -94,10 +94,23 @@ def login(request):
 
             # If a face is recognized, render the login.html with the recognized face's details
             if recognized_face:
+                Attendence.objects.create(empid=recognized_face.empid)
+                # Update total no.of days by increasing one in Register
+                recognized_face.total_days += 1
+                recognized_face.save()
 
-                return render(request, 'log.html', {'register': recognized_face, 'match': True})
+                return render(request, 'log.html', {'register':"Emp id : "+str(recognized_face), 'match': True})
             else:
-                return HttpResponse('Face not recognized')
+                return render(request, 'log.html', {'register': "Not reconized", 'match': True})
+                # return HttpResponse('Face not recognized')
 
     return render(request, 'log.html')
+
+def attendence(request):
+        if request.method == 'POST':
+            empid = request.POST.get('empid')
+            attendence = Attendence.objects.filter(empid=empid)
+            total_days = Register.objects.filter(empid=empid).first().total_days if Register.objects.filter(empid=empid).exists() else 0
+            return render(request, 'attendence.html', {'attendence': attendence, 'total_days': total_days})
+        return render(request, 'attendence.html')
 

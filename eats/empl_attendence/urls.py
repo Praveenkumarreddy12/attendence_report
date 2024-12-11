@@ -21,8 +21,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', views.register, name='register'),
-    path('login', views.login, name='login'),
+    path('register/', views.register, name='register'),
+    path('', views.login, name='login'),
+    path('attendence/', views.attendence, name='attendence'),
 ]
 
 if settings.DEBUG:
